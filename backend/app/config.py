@@ -1,12 +1,11 @@
 from pydantic_settings import BaseSettings
 from pydantic import field_validator
-import os
 
 class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg2://macroforge:macroforge@db:5432/macroforge"
     jwt_secret_key: str = "change-me"
     admin_username: str = "admin"
-    admin_password: str = "change-me"
+    admin_password: str = "your_password_here"   # <-- change this to match your .env value
     usda_api_key: str | None = None
 
     @field_validator("admin_password")
@@ -18,5 +17,4 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
-# Export an instance
-settings = Settings()
+settings = Settings()   # <-- this line is critical
