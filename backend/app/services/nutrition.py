@@ -3,10 +3,10 @@ from ..config import settings
 
 USDA_BASE = "https://api.nal.usda.gov/fdc/v1"
 
-async def search_foods(query: str):
+async def search_foods(query: str, page_size: int = 10):
     if not settings.usda_api_key:
         return []
-    params = {"query": query, "api_key": settings.usda_api_key, "pageSize": 10}
+    params = {"query": query, "api_key": settings.usda_api_key, "pageSize": page_size}
     async with httpx.AsyncClient(timeout=20) as client:
         r = await client.get(f"{USDA_BASE}/foods/search", params=params)
         r.raise_for_status()
