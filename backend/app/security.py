@@ -1,16 +1,26 @@
 from datetime import datetime, timedelta, timezone
 from jose import jwt
-from passlib.context import CryptContext
+from passlib.hash import argon2
 from .config import settings
 
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 ALGORITHM = "HS256"
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["argon2"])
+    print("HASHING:", repr(password))   # log plaintext
+    h = pwd_context.hash(password)
+    print("HASH RESULT:", repr(h))      # so you can see it
+    return h
 
 def verify_password(password: str, hashed: str) -> bool:
-    return pwd_context.verify(password, hashed)
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["argon2"])
+    print("VERIFYING PASSWORD:", repr(password))
+    print("VERIFYING AGAINST HASH:", repr(hashed))
+    ok = pwd_context.verify(password, hashed)
+    print("VERIFY RESULT:", ok)
+    return ok
 
 def create_access_token(sub: str, expires_minutes: int = 60 * 24 * 7) -> str:
     exp = datetime.now(timezone.utc) + timedelta(minutes=expires_minutes)
