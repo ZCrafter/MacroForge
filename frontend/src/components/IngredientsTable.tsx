@@ -16,106 +16,99 @@ type Ingredient = any
 export function IngredientsTable({ data }: { data: Ingredient[] }) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [filters, setFilters] = useState<ColumnFiltersState>([])
-  const [pinning, setPinning] = useState<ColumnPinningState>({ left: ['name'], right: [] })
 
   const columns = useMemo<ColumnDef<Ingredient>[]>(() => [
-    { accessorKey: 'name', header: 'Ingredient', enablePinning: true, cell: info => info.getValue() },
-    { accessorKey: 'category', header: 'Category', enablePinning: true },
-    { accessorKey: 'unit', header: 'Unit', enablePinning: true },
-    { accessorKey: 'quantity', header: 'Qty', enablePinning: true },
-    { accessorKey: 'calories', header: 'Calories', enablePinning: true },
-    { accessorKey: 'protein_g', header: 'Protein', enablePinning: true },
-    { accessorKey: 'carbs_g', header: 'Carbs', enablePinning: true },
-    { accessorKey: 'fat_g', header: 'Fat', enablePinning: true },
-    { accessorKey: 'fiber_g', header: 'Fiber', enablePinning: true },
-    { accessorKey: 'sugar_g', header: 'Sugar', enablePinning: true },
-    { accessorKey: 'sodium_mg', header: 'Sodium', enablePinning: true },
-    { accessorKey: 'price', header: 'Price', enablePinning: true },
-    { accessorKey: 'source', header: 'Source', enablePinning: true },
-    { accessorKey: 'source_fdc_id', header: 'FDC ID', enablePinning: true },
-    { accessorKey: 'manual_overrides', header: 'Manual', enablePinning: true, cell: info => String(info.getValue()) },
+    { accessorKey: 'name', header: 'Ingredient Name', size: 200, enablePinning: true },
+    { accessorKey: 'category', header: 'Category', size: 100 },
+    { accessorKey: 'unit', header: 'Unit', size: 80 },
+    { accessorKey: 'quantity', header: 'Qty', size: 80 },
+    { accessorKey: 'calories', header: 'Calories', size: 100 },
+    { accessorKey: 'protein_g', header: 'Protein (g)', size: 100 },
+    { accessorKey: 'carbs_g', header: 'Carbs (g)', size: 100 },
+    { accessorKey: 'fat_g', header: 'Fat (g)', size: 100 },
+    { accessorKey: 'fiber_g', header: 'Fiber (g)', size: 100 },
+    { accessorKey: 'sugar_g', header: 'Sugar (g)', size: 100 },
+    { accessorKey: 'sodium_mg', header: 'Sodium (mg)', size: 100 },
+    { accessorKey: 'price', header: 'Price ($)', size: 80 },
+    { accessorKey: 'source', header: 'Source', size: 80 },
+    { accessorKey: 'manual_overrides', header: 'Manual?', size: 80, cell: info => info.getValue() ? 'Yes' : 'No' },
   ], [])
 
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, columnFilters: filters, columnPinning: pinning },
+    state: { sorting, columnFilters: filters },
     onSortingChange: setSorting,
     onColumnFiltersChange: setFilters,
-    onColumnPinningChange: setPinning,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    columnResizeMode: 'onChange',
   })
 
   return (
     <div style={{overflowX:'auto', border:'1px solid #334155', borderRadius:16}}>
-      <table style={{borderCollapse:'separate', borderSpacing:0, minWidth:1600, width:'100%'}}>
+      <table style={{borderCollapse:'collapse', minWidth:1600, width:'100%'}}>
         <thead>
-          {table.getHeaderGroups().map(hg => (
-            <tr key={hg.id}>
-              {hg.headers.map(header => {
-                const pinned = header.column.getIsPinned()
-                return (
-                  <th
-                    key={header.id}
-                    style={{
-                      position: pinned ? 'sticky' : 'static',
-                      left: pinned === 'left' ? `${header.column.getStart('left')}px` : undefined,
-                      right: pinned === 'right' ? `${header.column.getAfter('right')}px` : undefined,
-                      zIndex: pinned ? 2 : 1,
-                      background: 'var(--card)',
-                      minWidth: 120,
-                      borderBottom: '1px solid #334155',
-                      padding: 10,
-                      textAlign: 'left',
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <div className="row" style={{gap:8}}>
-                        <button onClick={header.column.getToggleSortingHandler() as any}>
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <th
+                  key={header.id}
+                  style={{
+                    borderBottom: '1px solid #334155',
+                    background: 'var(--card)',
+                    padding: '12px 8px',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                    whiteSpace: 'nowrap',
+                    width: header.getSize(),
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 10,
+                  }}
+                >
+                  <div style={{display:'flex', gap:4, alignItems:'center'}}>
+                    <button
+                      onClick={header.column.getToggleSortingHandler()}
+                      style={{padding: '2px 4px', fontSize:12, background:'none', border:'none', cursor:'pointer'}}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <>
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                        </button>
-                        <button onClick={() => header.column.pin(pinned === 'left' ? false : 'left')}>📌</button>
-                        <button onClick={() => header.column.setFilterValue('')}>✕</button>
-                      </div>
-                    )}
-                    <input
-                      style={{width:'100%', marginTop:6}}
-                      value={(header.column.getFilterValue() ?? '') as string}
-                      onChange={e => header.column.setFilterValue(e.target.value)}
-                      placeholder="Filter"
-                    />
-                  </th>
-                )
-              })}
+                          {header.column.getIsSorted() === 'asc' ? ' 🔼' : header.column.getIsSorted() === 'desc' ? ' 🔽' : ' ↕️'}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <input
+                    style={{width:'100%', padding:'4px', marginTop:4, fontSize:12}}
+                    value={(header.column.getFilterValue() ?? '') as string}
+                    onChange={e => header.column.setFilterValue(e.target.value)}
+                    placeholder={`Filter ${header.column.id}...`}
+                  />
+                </th>
+              ))}
             </tr>
           ))}
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => (
             <tr key={row.id}>
-              {row.getVisibleCells().map(cell => {
-                const pinned = cell.column.getIsPinned()
-                return (
-                  <td
-                    key={cell.id}
-                    style={{
-                      position: pinned ? 'sticky' : 'static',
-                      left: pinned === 'left' ? `${cell.column.getStart('left')}px` : undefined,
-                      right: pinned === 'right' ? `${cell.column.getAfter('right')}px` : undefined,
-                      zIndex: pinned ? 1 : 0,
-                      background: 'var(--bg)',
-                      borderBottom: '1px solid #1f2937',
-                      padding: 10,
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                )
-              })}
+              {row.getVisibleCells().map(cell => (
+                <td
+                  key={cell.id}
+                  style={{
+                    borderBottom: '1px solid #1f2937',
+                    padding: '12px 8px',
+                    whiteSpace: 'nowrap',
+                    width: cell.column.getSize(),
+                  }}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
