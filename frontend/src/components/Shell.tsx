@@ -1,3 +1,5 @@
+import { toggleTheme } from '../theme'  // 👈 ADD THIS LINE
+
 export function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="container">
