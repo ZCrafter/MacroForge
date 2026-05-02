@@ -1,3 +1,8 @@
 export function Settings() {
-  return <div className="card"><h2>Settings</h2><p className="small">Profile and manual overrides screen will be expanded in v1.1.</p></div>
+  return (
+    <div className="card">
+      <h2>Profile Settings</h2>
+      <p>Sex, height, weight, activity level for goal calculation.</p>
+    </div>
+  )
 }
