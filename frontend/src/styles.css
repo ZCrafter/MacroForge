@@ -1,0 +1,11 @@
+:root[data-theme="dark"] { --bg:#0b0f14; --card:#121826; --text:#e5e7eb; --muted:#94a3b8; --accent:#22c55e; }
+:root[data-theme="light"] { --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --accent:#16a34a; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font-family:Inter, system-ui, sans-serif; }
+button, input, select, textarea { background:var(--card); color:var(--text); border:1px solid #334155; padding:10px 12px; border-radius:10px; }
+a { color:var(--accent); }
+.grid { display:grid; gap:16px; }
+.card { background:var(--card); border:1px solid #1f2937; border-radius:16px; padding:16px; }
+.row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.small { color:var(--muted); font-size:12px; }
+h1,h2,h3 { margin:0 0 12px 0; }
