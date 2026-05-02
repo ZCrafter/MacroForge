@@ -45,6 +45,13 @@ class IngredientIn(BaseModel):
     price: float = 0
     source: str = "manual"
     source_fdc_id: str = ""
+    vitamin_a_iu: float = 0
+    vitamin_c_mg: float = 0
+    vitamin_d_iu: float = 0
+    calcium_mg: float = 0
+    iron_mg: float = 0
+    potassium_mg: float = 0
+    magnesium_mg: float = 0
 
 class IngredientOut(IngredientIn):
     id: int
