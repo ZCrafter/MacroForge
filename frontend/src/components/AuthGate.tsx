@@ -1,9 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../api'
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
+  const [state, setState] = useState<'checking' | 'authed' | 'login'>('checking')
   const [err, setErr] = useState('')
-  if (localStorage.getItem('mf_token')) return <>{children}</>
+
+  useEffect(() => {
+    const t = localStorage.getItem('mf_token')
+    if (!t) {
+      setState('login')
+      return
+    }
+    api.me().then(() => setState('authed')).catch(() => {
+      localStorage.removeItem('mf_token')
+      setState('login')
+    })
+  }, [])
+
+  if (state === 'checking') return <div className="card">Checking login...</div>
+  if (state === 'authed') return <>{children}</>
+
   return (
     <div style={{maxWidth:360, margin:'80px auto'}} className="card">
       <h2>MacroForge</h2>
