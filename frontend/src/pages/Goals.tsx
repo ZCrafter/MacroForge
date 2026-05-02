@@ -1,3 +1,8 @@
 export function Goals() {
-  return <div className="card"><h2>Goals</h2><p className="small">Goal detail screen will be expanded in v1.1.</p></div>
+  return (
+    <div className="card">
+      <h2>Goals</h2>
+      <p>Auto-calculated goals from profile will be here. Manually override any target.</p>
+    </div>
+  )
 }
